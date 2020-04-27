@@ -4,6 +4,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
 from .forms import CommentForm
 from taggit.models import Tag
+from django.db.models import Count #agregates, counts the amount of tags in db level
 
 class PostListView(ListView):
     queryset = Post.published.all()
@@ -46,4 +47,18 @@ def post_detail(request, year, month, day, post):
             new_comment.save() #saving the comment in db
     else:
         comment_form = CommentForm()
-    return render(request, 'blog/post/detail.html', locals())
+    
+    post_tags_id = post.tags.values_list('id', flat=True) #gets all the id tags of the current post, flat=True makes it flat [1,2,3...]
+    similar_posts = Post.published.filter(tags__in=post_tags_id)\
+        .exclude(id=post.id)
+    # gets all the posts having THAT tag, excluding the current
+    similar_posts = similar_posts.annotate(same_tags=Count('tags'))\
+        .order_by('-same_tags','-publish')[:4]
+    # with the help of COunt gets all the posts that have same tags to gather them into SAME_TAGS
+    # then orders them with less similar tags in the bottom, and most similat in the top
+
+    return render(request, 'blog/post/detail.html',
+        {'post': post, 'comments': comments,
+        'new_comment': new_comment,
+        'comment_form': comment_form,
+        'similar_posts': similar_posts})

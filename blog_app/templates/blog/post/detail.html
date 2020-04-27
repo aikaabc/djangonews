@@ -31,4 +31,13 @@
     <p><input type="submit" value="Add comment"></p>
 </form>
 {% endif %}
+<p class="similar_posts">
+        Similar Posts:
+            {% for post in post.tags.all %}
+                <a href='{% url "blog:post_list_by_tag" tag.slug %}'>
+                {{ post.name }}
+                </a>
+                {% if not forloop.last %}, {% endif %}
+        {% endfor %}
+    </p>
 {% endblock %}
