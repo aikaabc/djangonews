@@ -37,6 +37,6 @@ def post_detail(request, year, month, day, post):
             new_comment = comment_form.save(commit=False) #comment is created but still not saved in db
             new_comment.post = post #tie up the comment to the current post
             new_comment.save() #saving the comment in db
-        else:
-            comment_form = CommentForm()
-    return render(request, 'blog/post/detail.html', {'post':post, 'comments': comments, 'new_comment': new_comment, 'comment_form': comment_form})
+    else:
+        comment_form = CommentForm()
+    return render(request, 'blog/post/detail.html', locals())
