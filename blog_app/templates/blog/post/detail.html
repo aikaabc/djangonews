@@ -34,7 +34,7 @@
 <p class="similar_posts">
         Similar Posts:
             {% for post in post.tags.all %}
-                <a href='{% url "blog:post_list_by_tag" tag.slug %}'>
+                <a href='{% url "blog_app:post_list_by_tag" post.slug %}'>
                 {{ post.name }}
                 </a>
                 {% if not forloop.last %}, {% endif %}
