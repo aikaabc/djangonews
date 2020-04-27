@@ -1,5 +1,5 @@
 body {
-    background-color: rgb(33, 3, 188), rgb(199, 201, 229);
+    background: linear-gradient(to bottom, #b8c0d1,  #270d36);
     font-family: 'Coronetscript', cursive;;
     font-size: 18px;
 }
