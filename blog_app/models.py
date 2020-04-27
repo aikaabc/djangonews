@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.urls import reverse #gives opportunity to get url after entering its name of draft and parameters
-# from django.views.generic import DetailView
+from taggit.managers import TaggableManager
 
 class PublishedManager(models.Manager):
     def get_queryset(self):
@@ -29,6 +29,7 @@ class Post(models.Model):
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft')
     objects = models.Manager() #default manager
     published = PublishedManager() #my new manager
+    tags = TaggableManager() #this manager allows to add, get list of tags and del them from the posts
 
     class Meta:
         ordering = ('-publish',)

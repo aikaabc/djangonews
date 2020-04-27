@@ -3,6 +3,7 @@ from .models import Post, Comment
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
 from .forms import CommentForm
+from taggit.models import Tag
 
 class PostListView(ListView):
     queryset = Post.published.all()
@@ -11,8 +12,14 @@ class PostListView(ListView):
     template_name = 'blog/post/list.html'
 
 
-def post_list(request):
+def post_list(request, tag_slug=None):
     object_list = Post.published.all()
+    tag = None #this will be in URL 
+
+    if tag_slug:
+        tag = get_object_or_404(Tag, slug=tag_slug) #making  a queryst and getting the tagged objects with get404
+        object_list = object_list.filter(tags__in=[tag]) #filter all the posts getting only the posts that are related to the tag (many to many)
+    
     paginator = Paginator(object_list, 4) #4 posts on each page
     page = request.GET.get('page')
     try:
@@ -22,7 +29,7 @@ def post_list(request):
     except EmptyPage: #if the number of the page is more than exist then return the very last page
         posts = paginator.page(pagination.num_pages)
     return render(request, 'blog/post/list.html', 
-    {'page': page, 'posts': posts})
+    {'page': page, 'posts': posts, 'tag': tag})
 
 def post_detail(request, year, month, day, post):
     post = get_object_or_404(
